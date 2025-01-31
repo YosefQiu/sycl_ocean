@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
-project(MPASO_SYCL VERSION 0.1.0)
+project(MOPS VERSION 0.0.1)
 
 set(PRJ_COMPILE_FEATURES)
 set(CMAKE_C_COMPILER icx)
@@ -18,12 +18,6 @@ FIND_PACKAGE(VTK COMPONENTS
   IOLegacy
   IOXML
   InteractionStyle
-  RenderingAnnotation
-  RenderingContextOpenGL2
-  RenderingCore
-  RenderingFreeType
-  RenderingGL2PSOpenGL2
-  RenderingOpenGL2 QUIET
 )
 
 if(VTK_FOUND)

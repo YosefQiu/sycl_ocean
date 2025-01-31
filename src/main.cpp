@@ -7,7 +7,9 @@
 #include "ImageBuffer.hpp"
 #include "MPASOVisualizer.h"
 #include "VTKFileManager.hpp"
-#include "cxxopts.hpp"
+#include "Command.hpp"	
+
+
 #include "ndarray/ndarray_group_stream.hh"
 
 // time fixed
@@ -283,36 +285,19 @@ void TimeVaryingTrajectory(sycl::queue& sycl_Q,
 }
 
 
-bool parseCommandLine(int argc, char* argv[], std::string& input_yaml_filename, std::string& data_path_prefix) 
-{
-    cxxopts::Options options(argv[0]);
-	options.add_options()
-		("input,i", "Input yaml file", cxxopts::value<std::string>(input_yaml_filename))
-		("prefix,p", "Data path prefix", cxxopts::value<std::string>(data_path_prefix))
-		("help,h", "Print this information");
-
-	auto results = options.parse(argc, argv);
-	if (results.count("help")) 
-	{
-        std::cout << options.help() << std::endl;
-        return false;
-    }
-	if (!results.count("input")) 
-	{
-        Debug("[ERROR]::No input file detected");
-        return false;
-    }
-	return true;
-}
 
 int main(int argc, char* argv[])
 {
-
-	if (!parseCommandLine(argc, argv, input_yaml_filename, data_path_prefix)) {
-        exit(1);
+	std::optional<Command> cmd;
+	try {
+        cmd = Command::parse(argc, argv);
+        cmd->print();
+    } catch (const std::exception& e) {
+        std::cerr << "[ERROR] " << e.what() << std::endl;
+        return EXIT_FAILURE;
     }
-	
-    path = input_yaml_filename.c_str();
+	if (cmd)
+    	path = cmd->input_yaml_path.c_str();
 
 	sycl::queue sycl_Q;
 #if __linux__
